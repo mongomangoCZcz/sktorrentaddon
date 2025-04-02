@@ -1,0 +1,2 @@
+# sktorrentaddon
+stremio addon
