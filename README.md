@@ -1,2 +1,2 @@
-# sktorrentaddon
-stremio addon
+# sktorrent addon for stremio 
+stremio addon<sup>beta</sup>
