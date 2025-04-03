@@ -15,7 +15,7 @@ const manifest = {
 };
 
 const LOGIN_DATA = {
-    username: process.env.SKTORRENT_USERNAME || "your_username",
+    username: process.env.SKTORRENT_USERNAME || "jozkonevicist",
     password: process.env.SKTORRENT_PASSWORD || "your_password"
 };
 
