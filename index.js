@@ -16,7 +16,7 @@ const manifest = {
 
 const LOGIN_DATA = {
     username: process.env.SKTORRENT_USERNAME || "jozkonevicist",
-    password: process.env.SKTORRENT_PASSWORD || "your_password"
+    password: process.env.SKTORRENT_PASSWORD || "xekryt-wosjop-6kIdbo"
 };
 
 const axiosInstance = axios.create({
