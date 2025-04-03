@@ -71,6 +71,6 @@ builder.defineStreamHandler(async (args) => {
 });
 
 // Spuštění serveru
-const port = 7225;
+const port = process.env.PORT || 3000;
 serveHTTP(builder.getInterface(), { port }); // Použití serveHTTP z SDK
 console.log(`Addon běží na http://127.0.0.1:${port}/manifest.json`);
