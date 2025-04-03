@@ -1,4 +1,4 @@
-const { addonBuilder, serveHTTP } = require("stremio-addon-sdk"); // Přidáno serveHTTP
+const { addonBuilder, serveHTTP } = require("stremio-addon-sdk");
 const axios = require("axios");
 const cheerio = require("cheerio");
 
@@ -14,10 +14,24 @@ const manifest = {
     catalogs: []
 };
 
-// Funkce pro scrapování torrentů
-async function scrapeTorrents(imdbId) {
+// Funkce pro získání názvu filmu podle IMDb ID
+async function getMovieTitle(imdbId) {
+    const apiKey = "TVOJE_OMDB_API_KLIC"; // Získej API klíč na http://www.omdbapi.com/apikey.aspx
+    const url = `https://www.omdbapi.com/?i=${imdbId}&apikey=${apiKey}`;
+    
     try {
-        const searchUrl = `https://sktorrent.eu/torrents_v2.php?search=${imdbId}&active=0`;
+        const response = await axios.get(url);
+        return response.data.Title; // Vrátí název filmu
+    } catch (error) {
+        console.error("Chyba při získávání názvu filmu:", error.message);
+        return null;
+    }
+}
+
+// Funkce pro scrapování torrentů podle názvu filmu
+async function scrapeTorrents(movieTitle) {
+    try {
+        const searchUrl = `https://sktorrent.eu/torrents_v2.php?search=${encodeURIComponent(movieTitle)}&active=0`;
         const response = await axios.get(searchUrl, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -63,14 +77,27 @@ const builder = new addonBuilder(manifest);
 // Handler pro streamy
 builder.defineStreamHandler(async (args) => {
     const imdbId = args.id;
-    const streams = await scrapeTorrents(imdbId);
+    console.log(`Hledám streamy pro IMDb ID: ${imdbId}`);
+
+    // Nejprve získáme název filmu
+    const movieTitle = await getMovieTitle(imdbId);
+    if (!movieTitle) {
+        return Promise.resolve({ streams: [] }); // Pokud nenajdeme název, nevracíme nic
+    }
+
+    console.log(`Nalezený název: ${movieTitle}`);
+
+    // Hledáme torrenty podle názvu filmu
+    const streams = await scrapeTorrents(movieTitle);
     if (streams) {
         return Promise.resolve({ streams });
     }
+    
     return Promise.resolve({ streams: [] });
 });
 
 // Spuštění serveru
 const port = process.env.PORT || 3000;
-serveHTTP(builder.getInterface(), { port }); // Použití serveHTTP z SDK
+serveHTTP(builder.getInterface(), { port });
 console.log(`Addon běží na http://127.0.0.1:${port}/manifest.json`);
+
