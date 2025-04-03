@@ -16,7 +16,7 @@ const manifest = {
 
 // Funkce pro získání názvu filmu podle IMDb ID
 async function getMovieTitle(imdbId) {
-    const apiKey = "TVOJE_OMDB_API_KLIC"; // Získej API klíč na http://www.omdbapi.com/apikey.aspx
+    const apiKey = "91fa16b4"; // Získej API klíč na http://www.omdbapi.com/apikey.aspx
     const url = `https://www.omdbapi.com/?i=${imdbId}&apikey=${apiKey}`;
     
     try {
