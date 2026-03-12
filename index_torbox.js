@@ -5,7 +5,7 @@ const cheerio = require("cheerio");
 // ============================================================
 // KONFIGURACE – vyplň svůj Torbox API klíč
 // ============================================================
-const TORBOX_API_KEY = process.env.TORBOX_API_KEY || "TVUJ_TORBOX_API_KLIC";
+const TORBOX_API_KEY = process.env.TORBOX_API_KEY || "dfdedcf5-b06e-4668-8188-ffd1fb9556dc";
 const OMDB_API_KEY   = process.env.OMDB_API_KEY   || "91fa16b4";
 const PORT           = process.env.PORT            || 3000;
 
