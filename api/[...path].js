@@ -66,16 +66,21 @@ async function scrapeTorrents(searchQuery) {
 
         $("table tr").each((_, el) => {
             const row = $(el);
-            const detailLink = row.find("a[href*='details.php']");
-            const dlLink     = row.find("a[href*='download.php']");
 
+            // Skutečné torrenty mají v details.php odkazu parametr "name="
+            // Komentáře mají pouze "id=" s "#comments" na konci - ty přeskočíme
+            const detailLink = row.find("a[href*='details.php?name=']");
             if (!detailLink.length) return;
 
-            const title   = detailLink.text().trim();
-            const dlHref  = dlLink.attr("href")     || "";
-            const detHref = detailLink.attr("href") || "";
+            // Vezmi první řádek titulu (před \n)
+            const fullTitle = detailLink.first().text().trim();
+            const title     = fullTitle.split("\n")[0].trim();
+            if (!title || title.length < 3) return;
 
-            const hashMatch = (dlHref + " " + detHref).match(/[?&]id=([a-fA-F0-9]{40})/i);
+            const detHref = detailLink.first().attr("href") || "";
+
+            // Hash je vždy v details.php?name=...&id=HASH
+            const hashMatch = detHref.match(/[?&]id=([a-fA-F0-9]{40})/i);
             if (!hashMatch) return;
 
             const infoHash = hashMatch[1].toLowerCase();
