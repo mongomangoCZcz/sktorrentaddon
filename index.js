@@ -29,7 +29,7 @@ const TRACKERS = [
 // ============================================================
 const manifest = {
     id: "org.stremio.sktorrent-torbox",
-    version: "2.1.0",
+    version: "3.1.0",
     name: "SKTorrent + Torbox",
     description: "Streamování přes Torbox z torrentů nalezených na sktorrent.eu",
     resources: ["stream"],
