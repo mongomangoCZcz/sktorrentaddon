@@ -18,7 +18,7 @@ const TRACKERS = [
 
 const MANIFEST = {
     id: "org.stremio.sktorrent-torbox",
-    version: "3.0.0",
+    version: "4.0.0",
     name: "SKTorrent + Torbox",
     description: "Streamování přes Torbox z torrentů nalezených na sktorrent.eu",
     resources: ["stream"],
