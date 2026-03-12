@@ -64,39 +64,49 @@ async function scrapeTorrents(searchQuery) {
         const $ = cheerio.load(data);
         const results = [];
 
+        const seenHashes = new Set();
+
         $("table tr").each((_, el) => {
             const row = $(el);
 
             // Skutečné torrenty mají v details.php odkazu parametr "name="
             // Komentáře mají pouze "id=" s "#comments" na konci - ty přeskočíme
-            const detailLink = row.find("a[href*='details.php?name=']");
-            if (!detailLink.length) return;
+            const detailLinks = row.find("a[href*='details.php?name=']");
+            if (!detailLinks.length) return;
 
-            // Vezmi první řádek titulu (před \n)
-            const fullTitle = detailLink.first().text().trim();
-            const title     = fullTitle.split("\n")[0].trim();
-            if (!title || title.length < 3) return;
+            // Každý řádek může mít více odkazů (zobrazení více torrentů v jedné buňce)
+            // Zpracuj každý odkaz zvlášť
+            detailLinks.each((_, linkEl) => {
+                const detHref = $(linkEl).attr("href") || "";
 
-            const detHref = detailLink.first().attr("href") || "";
+                // Hash je vždy v details.php?name=...&id=HASH
+                const hashMatch = detHref.match(/[?&]id=([a-fA-F0-9]{40})/i);
+                if (!hashMatch) return;
 
-            // Hash je vždy v details.php?name=...&id=HASH
-            const hashMatch = detHref.match(/[?&]id=([a-fA-F0-9]{40})/i);
-            if (!hashMatch) return;
+                const infoHash = hashMatch[1].toLowerCase();
 
-            const infoHash = hashMatch[1].toLowerCase();
+                // Přeskoč duplikáty
+                if (seenHashes.has(infoHash)) return;
+                seenHashes.add(infoHash);
 
-            let size = "";
-            let seeders = 0;
-            row.find("td").each((_, td) => {
-                const text = $(td).text().trim();
-                if (/\d+(\.\d+)?\s*(MB|GB|MiB|GiB)/i.test(text)) size = text;
-                if (/^\d{1,5}$/.test(text)) {
-                    const n = parseInt(text);
-                    if (n > seeders && n < 50000) seeders = n;
-                }
+                // Vezmi první řádek textu odkazu jako titul
+                const fullTitle = $(linkEl).text().trim();
+                const title     = fullTitle.split("\n")[0].trim();
+                if (!title || title.length < 3) return;
+
+                let size = "";
+                let seeders = 0;
+                row.find("td").each((_, td) => {
+                    const text = $(td).text().trim();
+                    if (/\d+(\.\d+)?\s*(MB|GB|MiB|GiB)/i.test(text)) size = text;
+                    if (/^\d{1,5}$/.test(text)) {
+                        const n = parseInt(text);
+                        if (n > seeders && n < 50000) seeders = n;
+                    }
+                });
+
+                results.push({ title, infoHash, size, seeders });
             });
-
-            results.push({ title, infoHash, size, seeders });
         });
 
         results.sort((a, b) => b.seeders - a.seeders);
