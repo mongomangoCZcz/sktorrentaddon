@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/manifest.json",
-      "destination": "/api/manifest.json"
+      "destination": "/api/manifest"
     },
     {
       "source": "/stream/:type/:id",
