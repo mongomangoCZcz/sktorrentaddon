@@ -1,15 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "",
-  "outputDirectory": "",
-  "routes": [
+  "rewrites": [
     {
-      "src": "/manifest.json",
-      "dest": "/api/manifest.json.js"
+      "source": "/manifest.json",
+      "destination": "/api/manifest.json"
     },
     {
-      "src": "/stream/([^/]+)/([^/]+)",
-      "dest": "/api/stream/[type]/[id].js?type=$1&id=$2"
+      "source": "/stream/:type/:id",
+      "destination": "/api/stream/[type]/[id]"
     }
   ],
   "functions": {
