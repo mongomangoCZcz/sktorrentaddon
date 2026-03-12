@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/manifest.json",
+      "dest": "/api/manifest.json.js"
+    },
+    {
+      "src": "/stream/([^/]+)/([^/]+)",
+      "dest": "/api/stream/[type]/[id].js?type=$1&id=$2"
+    }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "maxDuration": 30
+    }
+  }
+}
